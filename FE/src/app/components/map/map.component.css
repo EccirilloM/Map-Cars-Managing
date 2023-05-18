@@ -1,0 +1,29 @@
+#outer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 70px);  /* sottrae l'altezza della header */
+  width: calc(100vw - 250px);  /* sottrae la larghezza della sidebar */
+  padding: 30px;
+  margin-top: 20px;  /* aggiunge un margine superiore per la header */
+  margin-left: 250px;  /* aggiunge un margine sinistro per la sidebar */
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+}
+  
+.map-frame {
+  border: 2px solid black;
+  height: 100%;
+}
+  
+#map {
+  height: 100%;
+}
+
+/* TAILWIND */
+/* .test {
+  @apply
+}  */
