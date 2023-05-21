@@ -21,7 +21,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegistrationComponent } from './components/registration/registration.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
-
+import { MapComponent } from './components/map/map.component';
 
 
 @NgModule({
@@ -39,6 +39,7 @@ import { AdminGuard } from './guards/admin.guard';
     AddPersonComponent,
     LoginComponent,
     RegistrationComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,

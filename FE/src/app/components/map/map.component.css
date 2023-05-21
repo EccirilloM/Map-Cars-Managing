@@ -1,5 +1,6 @@
 #outer-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: calc(100vh - 70px);  /* sottrae l'altezza della header */
@@ -9,8 +10,28 @@
   margin-left: 250px;  /* aggiunge un margine sinistro per la sidebar */
 }
 
-.map-container {
+.search-form {
+  width: 80%;
+  margin-bottom: 20px; /* optional: add some space between the search bar and the map */
+}
+
+.main-content {
+  display: flex;
   width: 100%;
+  height: calc(100% - 60px); /* sottrae l'altezza della barra di ricerca e dello spazio sotto di essa */
+}
+
+.results-container {
+  width: 30%; /* regola questa percentuale come desideri */
+  height: 100%;
+  overflow-y: auto; /* abilita lo scrolling se il contenuto supera l'altezza del contenitore */
+  border: 2px solid black; /* optional: aggiunge un bordo per distinguerlo dalla mappa */
+}
+
+
+
+.map-container {
+  width: 70%;
   height: 100%;
 }
   
@@ -22,6 +43,9 @@
 #map {
   height: 100%;
 }
+
+
+
 
 /* TAILWIND */
 /* .test {

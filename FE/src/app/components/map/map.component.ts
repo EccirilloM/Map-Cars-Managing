@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import { MarkerService } from 'src/app/service/marker.service';
 import { AuthService } from 'src/app/service/autentificazione.service';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -28,6 +29,10 @@ L.Marker.prototype.options.icon = iconDefault;
 export class MapComponent implements AfterViewInit {
   private map: any;
   private markerPointIds = new Map<L.Marker, number>();
+  public searchResults: any[] = [];
+  public searchTerm: string = '';
+  currentMarkers: L.Marker[] = [];
+  
 
   private initMap(): void {
     this.map = L.map('map', {
@@ -51,7 +56,7 @@ export class MapComponent implements AfterViewInit {
 
   private username: string | null = null;
 
-  constructor(private markerService: MarkerService, private authService: AuthService, private router: Router) {}
+  constructor(private markerService: MarkerService, private authService: AuthService, private router: Router, private http: HttpClient) {}
 
   private createAndConfigureMarker(latlng: L.LatLngExpression, username: string, id?: number): L.Marker {
     const marker = L.marker(latlng).addTo(this.map);
@@ -70,10 +75,12 @@ export class MapComponent implements AfterViewInit {
       lng = latlng.lng;
     }
     
-    const popupContent = `Creato da: <a id="link-${username}">${username}</a>
+    const popupContent = `
+      Creato da: <a id="link-${username}" style="cursor: pointer;">${username}</a>
       <br>LAT: ${lat}
       <br>LON: ${lng}`;
     marker.bindPopup(popupContent);
+
     
     // Aggiungiamo gli event listener per il mouseover, mouseout e click
     marker.on('mouseover', () => this.handleMouseOver(marker, username));
@@ -147,7 +154,35 @@ export class MapComponent implements AfterViewInit {
       this.router.navigate(['/getAllPersons'], { queryParams: { searchTerm: username } });
     }
   }
+
+  searchNominatim(query: string) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}`;
   
+    this.http.get<any[]>(url).subscribe(results => {
+      this.searchResults = results;
+    });
+  }
+  
+  centerMapOnResult(result: any): void {
+    const lat = parseFloat(result.lat);
+    const lon = parseFloat(result.lon);
+
+    // Se ci sono marker nell'array, rimuovi l'ultimo aggiunto dalla mappa
+    if (this.currentMarkers.length > 0) {
+      this.map.removeLayer(this.currentMarkers.pop());
+    }
+
+    // Centra la mappa sul risultato selezionato
+    this.map.setView([lat, lon], 6);
+  
+    // Aggiungi un marker al risultato selezionato
+    const marker = L.marker([lat, lon]);
+    marker.addTo(this.map);
+  
+    // Aggiungi il marker all'array di marker
+    this.currentMarkers.push(marker);
+  }
+
   ngAfterViewInit(): void {
     this.initMap();
   
@@ -158,4 +193,5 @@ export class MapComponent implements AfterViewInit {
       }
     });
   }
+
 }
