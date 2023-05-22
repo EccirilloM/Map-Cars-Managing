@@ -157,7 +157,6 @@ export class MapComponent implements AfterViewInit {
 
   searchNominatim(query: string) {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}`;
-  
     this.http.get<any[]>(url).subscribe(results => {
       this.searchResults = results;
     });
@@ -173,7 +172,7 @@ export class MapComponent implements AfterViewInit {
     }
 
     // Centra la mappa sul risultato selezionato
-    this.map.setView([lat, lon], 6);
+    this.map.flyTo([lat, lon], 10);
   
     // Aggiungi un marker al risultato selezionato
     const marker = L.marker([lat, lon]);
