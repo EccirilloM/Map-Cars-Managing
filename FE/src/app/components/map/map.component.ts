@@ -4,6 +4,7 @@ import { MarkerService } from 'src/app/service/marker.service';
 import { AuthService } from 'src/app/service/autentificazione.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NominatimService } from 'src/app/service/nominatim.service';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -32,6 +33,8 @@ export class MapComponent implements AfterViewInit {
   public searchResults: any[] = [];
   public searchTerm: string = '';
   currentMarkers: L.Marker[] = [];
+  public lat: string = '';
+  public lon: string = '';
   
 
   private initMap(): void {
@@ -56,7 +59,7 @@ export class MapComponent implements AfterViewInit {
 
   private username: string | null = null;
 
-  constructor(private markerService: MarkerService, private authService: AuthService, private router: Router, private http: HttpClient) {}
+  constructor(private markerService: MarkerService, private authService: AuthService, private router: Router, private http: HttpClient, private nominatimService: NominatimService) {}
 
   private createAndConfigureMarker(latlng: L.LatLngExpression, username: string, id?: number): L.Marker {
     const marker = L.marker(latlng).addTo(this.map);
@@ -108,6 +111,25 @@ export class MapComponent implements AfterViewInit {
     });
   }
 
+  private createPointFromButton(lat: number, lon: number): void {
+    const point = {
+      latitude: lat,
+      longitude: lon,
+      userId: this.authService.getUserId(),
+    };
+
+    this.markerService.addPoint(point.latitude, point.longitude, point.userId).subscribe({
+      next: (response: any) => {
+        const username = this.authService.getUsername();
+        this.createAndConfigureMarker([lat, lon], username, response.id);
+        console.log("Successfully point added to DB"); // Messaggio di successo
+      },
+      error: (error) => {
+        console.log("Error, point not added to DB"); // Messaggio di errore
+      }
+    });
+  }
+
   private deletePoint(marker: L.Marker): void {
     this.map.removeLayer(marker);
 
@@ -148,6 +170,25 @@ export class MapComponent implements AfterViewInit {
     this.deletePoint(marker);
   }
 
+  private handleAddPointButtonClick(): void {
+    const button = document.getElementById('add-point-button');
+    if (button) {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Qui devi implementare l'aggiunta del punto al tuo database
+        // Utilizza l'ultimo marker nell'array currentMarkers come punto da aggiungere
+        const marker = this.currentMarkers[this.currentMarkers.length - 1];
+        if (marker) {
+          const lat = marker.getLatLng().lat;
+          const lon = marker.getLatLng().lng;
+          console.log(`Adding point at ${lat}, ${lon} to database`);
+          // Qui chiami il tuo metodo createPointFromButton
+          this.createPointFromButton(lat, lon);
+        }
+      });
+    }
+  }
+  
   private navigateToUser(e: MouseEvent, username: string | null): void {
     e.preventDefault();
     if (username) {
@@ -156,12 +197,22 @@ export class MapComponent implements AfterViewInit {
   }
 
   searchNominatim(query: string) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}`;
-    this.http.get<any[]>(url).subscribe(results => {
+    // Utilizza il metodo search del servizio Nominatim
+    this.nominatimService.search(query).subscribe(results => {
       this.searchResults = results;
     });
   }
-  
+
+  reverseGeocode(lat: string, lon: string) {
+    const latNumber = parseFloat(lat);
+    const lonNumber = parseFloat(lon);
+
+    // Utilizza il metodo reverse del servizio Nominatim
+    this.nominatimService.reverse(latNumber, lonNumber).subscribe(result => {
+      this.searchResults = [result];
+    });
+  }
+
   centerMapOnResult(result: any): void {
     const lat = parseFloat(result.lat);
     const lon = parseFloat(result.lon);
@@ -173,11 +224,24 @@ export class MapComponent implements AfterViewInit {
 
     // Centra la mappa sul risultato selezionato
     this.map.flyTo([lat, lon], 10);
-  
+
     // Aggiungi un marker al risultato selezionato
     const marker = L.marker([lat, lon]);
     marker.addTo(this.map);
-  
+
+    // Aggiungi un popup al marker con un pulsante
+    const popupContent = `
+      <button id="add-point-button" class="p-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        ADD POINT
+      </button>
+    `;
+    marker.bindPopup(popupContent);
+
+    // Aggiungi l'ascoltatore dell'evento 'popupopen' al marker
+    marker.on('popupopen', (event) => {
+      this.handleAddPointButtonClick();
+    });
+    
     // Aggiungi il marker all'array di marker
     this.currentMarkers.push(marker);
   }
