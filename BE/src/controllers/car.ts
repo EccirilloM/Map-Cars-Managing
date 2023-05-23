@@ -9,12 +9,11 @@ export const deleteCarByPlates = async (req, res) => {
     const trimmedParams = trimAllFields(req.params);
     const { plates } = trimmedParams;
 
-    const upperPlates = plates.toUppercase();
-    
-    // Controllo dei dati in input
-    if (!upperPlates) {
+    if (!plates) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+    
+    const upperPlates = plates.toUpperCase();
 
     const car = await prisma.car
       .findFirst({

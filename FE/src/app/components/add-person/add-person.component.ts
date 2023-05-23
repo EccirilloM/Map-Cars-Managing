@@ -9,13 +9,15 @@ import { GestioneService } from 'src/app/service/gestione.service';
 export class AddPersonComponent {
   username: string = '';
   status: string = '';
+  password: string = '';
+  role: string = '';
   successMessage: string = '';
   errorMessage: string = '';
 
   constructor(private gestioneService: GestioneService) {}
 
   addPerson() {
-    this.gestioneService.addPerson(this.username, this.status).subscribe({
+    this.gestioneService.addPerson(this.username, this.status, this.password, this.role).subscribe({
       next: (data) => {
         this.successMessage = 'Person successfully created';
         this.errorMessage = '';
@@ -30,5 +32,4 @@ export class AddPersonComponent {
       },
     });
   }
-  
 }

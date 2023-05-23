@@ -22,6 +22,7 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { MapComponent } from './components/map/map.component';
+import { ExcelComponent } from './components/excel/excel.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { MapComponent } from './components/map/map.component';
     AddPersonComponent,
     LoginComponent,
     RegistrationComponent,
-    MapComponent
+    MapComponent,
+    ExcelComponent
   ],
   imports: [
     BrowserModule,

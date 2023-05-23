@@ -10,7 +10,7 @@ export const checkRoleMiddleware = (role: string) => {
     }
 
     try {
-      const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET);
       const userRole = decodedToken.role;
 
       if (userRole !== role) {

@@ -16,7 +16,6 @@ export class GestioneService {
     return this.http.get<any>(`${this.backEndUrl}/api/person/getAllPersons`, {
       headers: this.authService.getHttpHeaders(),
     });
-    
   }
 
   getAllCarsByPerson(username: string): Observable<any> {
@@ -26,16 +25,18 @@ export class GestioneService {
   }
 
   changeUsername(username: string, newUsername: string): Observable<any> {
-    return this.http.put<any>(`${this.backEndUrl}/api/person/changeUsername/${username}/${newUsername}`, {
+    return this.http.put<any>(`${this.backEndUrl}/api/person/changeUsername/${username}`, { newUsername }, {
       headers: this.authService.getHttpHeaders()
     });
   }
   
-  addPerson(username: string, status: string): Observable<any> {
-    return this.http.post<any>(`${this.backEndUrl}/api/person/addPerson`, { username, status }, {
+  
+  addPerson(username: string, status: string, password: string, role: string): Observable<any> {
+    return this.http.post<any>(`${this.backEndUrl}/api/person/addPerson`, {username, status, password, role}, {
       headers: this.authService.getHttpHeaders()
     });
   }
+
   
   addCar(model: string, plates: string, username: string): Observable<any> {
     return this.http.post<any>(`${this.backEndUrl}/api/car/addCar`, { model, plates, username }, {

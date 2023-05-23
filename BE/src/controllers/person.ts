@@ -125,11 +125,9 @@ export const addPerson = async (req, res) => {
         .json({ message: "Lo status deve essere 'poor' o 'rich'" });
     }
 
-    // if (role !== "ADMIN" && role !== "USER") {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Il ruolo deve essere 'ADMIN' o 'USER'" });
-    // }
+    if (role !== "ADMIN" && role !== "USER") {
+      return res.status(400).json({ message: "Il ruolo deve essere 'ADMIN' o 'USER'" });
+    }    
 
     // Check if the person with the given username already exists
     const existingPerson = await prisma.person.findFirst({
@@ -146,7 +144,7 @@ export const addPerson = async (req, res) => {
       data: {
         username: username,
         password: password, // aggiunto il campo password
-        role: "USER", // aggiunto il campo role
+        role: role, // aggiunto il campo role
         status: status,
       },
     });

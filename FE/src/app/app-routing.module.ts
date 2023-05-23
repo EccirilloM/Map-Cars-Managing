@@ -14,6 +14,7 @@ import { RegistrationComponent } from './components/registration/registration.co
 import { AuthGuard } from './guards/auth.guard'; // Importa AuthGuard
 import { AdminGuard } from './guards/admin.guard';
 import { MapComponent } from './components/map/map.component';
+import { ExcelComponent } from './components/excel/excel.component';
 
 
 
@@ -37,6 +38,11 @@ const routes: Routes = [
     path: "map",
     component: MapComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: "excel",
+    component: ExcelComponent,
+    canActivate: [AuthGuard, AdminGuard],
   },
   {
     path: "addCar",
