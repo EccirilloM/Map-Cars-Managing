@@ -36,6 +36,7 @@ export const deleteCarByPlates = async (req, res) => {
       },
     });
 
+    // res.status(418).json({ message: "Car deleted successfully" });
     res.json({ message: "Car deleted successfully" });
   } catch (error) {
     console.error(error);

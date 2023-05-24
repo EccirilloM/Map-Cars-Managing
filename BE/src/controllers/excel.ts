@@ -25,7 +25,7 @@ export const excelPersonGenerator = async (req, res) => {
         res.download(filename);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(418).json({ message: "Internal server error" });
     }
   };
 
