@@ -38,17 +38,19 @@ export class MapComponent implements AfterViewInit {
   
 
   private initMap(): void {
+    //Visualizzazione iniziale della mappa.
     this.map = L.map('map', {
-      center: [41.91, 12.48],
+      center: [41.91, 12.48], //Coordinate di Roma
       zoom: 6,
     });
-
+    //Leaflet si affida ad OpenStreetMap, una mappa open-source
     const tiles = L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', //URL del servizio di tile di OpenStreetMap
       {
-        maxZoom: 18,
-        minZoom: 3,
+        maxZoom: 18, //Livello di zoom massimo consentito
+        minZoom: 3, //Livello di zoom minimo consentito
         attribution:
+          //Attribuzione dei dati della mappa
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }
     );
